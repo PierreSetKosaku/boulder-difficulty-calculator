@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boulder Difficulty Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; }
+        h2 { text-align: center; }
+        .container { display: flex; flex-direction: column; gap: 10px; }
+        .hold, .movement { display: flex; gap: 10px; align-items: center; }
+        .matrix-container { margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        button { margin-top: 10px; padding: 10px; }
+        .green { background-color: #a8e6a2; }
+        .orange { background-color: #f4c542; }
+        .red { background-color: #f57373; }
+    </style>
+</head>
+<body>
+    <h2>Boulder Difficulty Calculator</h2>
+    <div class="container">
+        <h3>Holds</h3>
+        <div id="holds-list"></div>
+        <button onclick="addHold()">Add Hold</button>
+        <button onclick="removeLastHold()">Remove Last Hold</button>
+        
+        <h3>Movements</h3>
+        <div id="movements-list"></div>
+        
+        <button onclick="calculateDifficulty()">Calculate Difficulty</button>
+        <h3>Total Difficulty: <span id="difficulty-score">0</span></h3>
+        
+        <button onclick="resetBoulder()">Reset Boulder</button>
+        
+        <div class="matrix-container">
+            <h3>Difficulty Matrix (Editable)</h3>
+            <table id="difficulty-matrix">
+                <tr>
+                    <th>Movement Type</th>
+                    <th>Jugs</th>
+                    <th>Crimps</th>
+                    <th>Slopers</th>
+                    <th>Pinches</th>
+                    <th>Edges</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let holds = [];
+        let movements = [];
+        let difficultyMatrix = {
+            "Lock-off": { "Jugs": 1.5, "Crimps": 3, "Slopers": 4, "Pinches": 3, "Edges": 2.5 },
+            "Sidepull": { "Jugs": 2, "Crimps": 4, "Slopers": 4, "Pinches": 3, "Edges": 3 },
+            "Undercling": { "Jugs": 2, "Crimps": 4, "Slopers": 5, "Pinches": 4, "Edges": 3.5 },
+            "Gaston": { "Jugs": 3, "Crimps": 4, "Slopers": 5, "Pinches": 4, "Edges": 3.5 },
+            "Deadpoint": { "Jugs": 3, "Crimps": 5, "Slopers": 6, "Pinches": 5, "Edges": 4 },
+            "Cross": { "Jugs": 3, "Crimps": 5, "Slopers": 6, "Pinches": 5, "Edges": 4 }
+        };
+        
+        function buildMatrixTable() {
+            const table = document.getElementById("difficulty-matrix");
+            for (const movement in difficultyMatrix) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${movement}</td>` + Object.keys(difficultyMatrix[movement]).map(hold => {
+                    const value = difficultyMatrix[movement][hold];
+                    return `<td><input type="number" value="${value}" id="${movement}-${hold}" style="width: 50px;" oninput="updateMatrix()"></td>`;
+                }).join('');
+                table.appendChild(row);
+            }
+        }
+
+        function updateMatrix() {
+            for (const movement in difficultyMatrix) {
+                for (const hold in difficultyMatrix[movement]) {
+                    let inputField = document.getElementById(`${movement}-${hold}`);
+                    let value = parseFloat(inputField.value) || 0;
+                    difficultyMatrix[movement][hold] = value;
+                    inputField.className = value <= 3 ? 'green' : value <= 5 ? 'orange' : 'red';
+                }
+            }
+        }
+        
+        function updateHolds() {
+            for (let i = 0; i < holds.length; i++) {
+                holds[i].x = parseInt(document.getElementById(`x${i}`).value);
+                holds[i].y = parseInt(document.getElementById(`y${i}`).value);
+                holds[i].type = document.getElementById(`holdType${i}`).value;
+            }
+        }
+        
+        function calculateDifficulty() {
+            updateMatrix();
+            updateHolds();
+            let totalDifficulty = 0;
+            for (let i = 0; i < movements.length; i++) {
+                const hold1 = holds[i];
+                const movement = movements[i].type;
+                if (!hold1 || !difficultyMatrix[movement]) continue;
+                const distance = Math.sqrt((holds[i + 1].x - hold1.x) ** 2 + (holds[i + 1].y - hold1.y) ** 2) * 20;
+                const holdFactor = difficultyMatrix[movement][hold1.type];
+                totalDifficulty += holdFactor * (1 + distance / 50);
+            }
+            document.getElementById("difficulty-score").innerText = totalDifficulty.toFixed(2);
+        }
+        
+        function removeLastHold() {
+            if (holds.length > 0) {
+                holds.pop();
+                document.getElementById("holds-list").lastChild.remove();
+                if (movements.length > 0) {
+                    movements.pop();
+                    document.getElementById("movements-list").lastChild.remove();
+                }
+            }
+        }
+
+        function resetBoulder() {
+            document.getElementById("holds-list").innerHTML = "";
+            document.getElementById("movements-list").innerHTML = "";
+            document.getElementById("difficulty-score").innerText = "0";
+            holds = [];
+            movements = [];
+        }
+        
+        buildMatrixTable();
+    </script>
+</body>
+</html>
