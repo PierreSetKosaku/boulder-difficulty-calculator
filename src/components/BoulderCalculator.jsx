@@ -18,10 +18,23 @@ function BoulderCalculator({ holds, movements, matrix }) {
       return totalDifficulty.toFixed(2);
     };
   
+    const calculateAvgDifficulty = () => {
+      if (holds.length < 2) return 0; // Prevents crashes when there are not enough holds
+
+      let totalDifficulty = calculateDifficulty();
+      let AvgDifficultyPerHold = 0;
+
+      AvgDifficultyPerHold = totalDifficulty / holds.length;
+
+      return AvgDifficultyPerHold.toFixed(2);
+    };
+  
     return (
       <div className="mt-6 text-center">
         <h3 className="text-xl font-semibold text-green-400">Total Difficulty:</h3>
         <p className="text-3xl font-bold text-green-500">{calculateDifficulty()}</p>
+        <h3 className="text-xl font-semibold text-green-400">Average Difficulty / Hold:</h3>
+        <p className="text-3xl font-bold text-green-500">{calculateAvgDifficulty()}</p>
       </div>
     );
   }

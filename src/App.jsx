@@ -9,10 +9,12 @@ function App() {
   const [movements, setMovements] = useState([]);
   const [matrix, setMatrix] = useState({
     "Lock-off": { Jugs: 1.5, Crimps: 3, Slopers: 4, Pinches: 3, Edges: 2.5 },
+    "Down-pull": { Jugs: 1, Crimps: 2.5, Slopers: 3.5, Pinches: 2.5, Edges: 2 },
     "Cross": { Jugs: 3, Crimps: 5, Slopers: 6, Pinches: 5, Edges: 4 },
     "Sidepull": { Jugs: 2, Crimps: 4, Slopers: 4, Pinches: 3, Edges: 3 },
     "Undercling": { Jugs: 2, Crimps: 4, Slopers: 5, Pinches: 4, Edges: 3.5 },
     "Deadpoint": { Jugs: 3, Crimps: 5, Slopers: 6, Pinches: 5, Edges: 4 },
+    "Gaston": { Jugs: 3.5, Crimps: 5.5, Slopers: 6.5, Pinches: 5.5, Edges: 4.5 },
   });
 
   const resetAll = () => {
@@ -20,10 +22,12 @@ function App() {
     setMovements([]);
     setMatrix({
       "Lock-off": { Jugs: 1.5, Crimps: 3, Slopers: 4, Pinches: 3, Edges: 2.5 },
+      "Down-pull": { Jugs: 1, Crimps: 2.5, Slopers: 3.5, Pinches: 2.5, Edges: 2 },
       "Cross": { Jugs: 3, Crimps: 5, Slopers: 6, Pinches: 5, Edges: 4 },
       "Sidepull": { Jugs: 2, Crimps: 4, Slopers: 4, Pinches: 3, Edges: 3 },
       "Undercling": { Jugs: 2, Crimps: 4, Slopers: 5, Pinches: 4, Edges: 3.5 },
       "Deadpoint": { Jugs: 3, Crimps: 5, Slopers: 6, Pinches: 5, Edges: 4 },
+      "Gaston": { Jugs: 3.5, Crimps: 5.5, Slopers: 6.5, Pinches: 5.5, Edges: 4.5 },
     });
   };
 

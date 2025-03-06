@@ -25,10 +25,12 @@ function MovementInput({ movements, setMovements, holds }) {
             className="p-1 bg-gray-700 text-white rounded"
           >
             <option value="Lock-off">Lock-off</option>
+            <option value="Down-pull">Down-pull</option>
             <option value="Cross">Cross</option>
             <option value="Sidepull">Sidepull</option>
             <option value="Undercling">Undercling</option>
             <option value="Deadpoint">Deadpoint</option>
+            <option value="Gaston">Gaston</option>
           </select>
         </div>
       ))}
