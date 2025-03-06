@@ -1,21 +1,24 @@
 function BoulderCalculator({ holds, movements, matrix }) {
     const calculateDifficulty = () => {
-      if (holds.length < 2) return 0; // Prevents crashes when there are not enough holds
-      
-      let totalDifficulty = 0;
-  
-      for (let i = 0; i < movements.length; i++) {
-        const hold1 = holds[i];
-        const hold2 = holds[i + 1];
-        const movement = movements[i];
-  
-        const distance = Math.sqrt((hold2.x - hold1.x) ** 2 + (hold2.y - hold1.y) ** 2) * 20;
-        const holdFactor = matrix[movement][hold1.type];
-  
-        totalDifficulty += holdFactor * (1 + distance / 50);
+      if (holds.length < 2) return 0;
+
+      return holds.slice(0, -1).reduce((total, hold, i) => {
+        return total + calculateMoveDifficulty(holds[i], holds[i + 1], movements[i], matrix);
+      }, 0).toFixed(2);
+    };
+
+    const calculateMoveDifficulty = (hold1, hold2, movement, matrix) => {
+      if (!hold1 || !hold2 || !movement) return 0; // Prevent errors
+    
+      // Skip calculation if a hold has (0,0) coordinates
+      if ((hold1.x === 0 && hold1.y === 0) || (hold2.x === 0 && hold2.y === 0)) {
+        return 0;
       }
-  
-      return totalDifficulty.toFixed(2);
+    
+      const distance = Math.sqrt((hold2.x - hold1.x) ** 2 + (hold2.y - hold1.y) ** 2) * 20;
+      const holdFactor = matrix[movement][hold1.type];
+    
+      return holdFactor * (1 + distance / 50);
     };
   
     const calculateAvgDifficulty = () => {
@@ -28,28 +31,14 @@ function BoulderCalculator({ holds, movements, matrix }) {
 
       return AvgDifficultyPerHold.toFixed(2);
     };
-    
+
     const calculateHardestMoveDifficulty = () => {
-      if (holds.length < 2) return 0; // Prevents crashes when there are not enough holds
-    
-      let hardestMove = 0;
-    
-      for (let i = 0; i < movements.length; i++) {
-        const hold1 = holds[i];
-        const hold2 = holds[i + 1];
-        const movement = movements[i];
-    
-        const distance = Math.sqrt((hold2.x - hold1.x) ** 2 + (hold2.y - hold1.y) ** 2) * 20;
-        const holdFactor = matrix[movement][hold1.type];
-    
-        const moveDifficulty = holdFactor * (1 + distance / 50);
-    
-        if (moveDifficulty > hardestMove) {
-          hardestMove = moveDifficulty; // Store the max difficulty move
-        }
-      }
-    
-      return hardestMove.toFixed(2);
+      if (holds.length < 2) return 0;
+
+      return holds.slice(0, -1).reduce((maxDifficulty, hold, i) => {
+        const moveDifficulty = calculateMoveDifficulty(holds[i], holds[i + 1], movements[i], matrix);
+        return Math.max(maxDifficulty, moveDifficulty);
+      }, 0).toFixed(2);
     };
   
     return (
