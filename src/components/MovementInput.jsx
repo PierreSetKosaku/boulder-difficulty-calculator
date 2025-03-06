@@ -11,6 +11,13 @@ function MovementInput({ movements, setMovements, holds }) {
     setMovements(updatedMovements);
   };
 
+  const removeMovement = (index) => {
+    if (movements.length > 1) {
+      const updatedMovements = movements.filter((_, i) => i !== index);
+      setMovements(updatedMovements);
+    }
+  };
+
   return (
     <div className="mb-6">
       <h3 className="text-lg font-semibold mb-2 text-blue-300">Movements</h3>
@@ -32,6 +39,12 @@ function MovementInput({ movements, setMovements, holds }) {
             <option value="Deadpoint">Deadpoint</option>
             <option value="Gaston">Gaston</option>
           </select>
+          <button
+            onClick={() => removeMovement(index)}
+            className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"
+            >
+              ✕
+          </button>
         </div>
       ))}
       <button
