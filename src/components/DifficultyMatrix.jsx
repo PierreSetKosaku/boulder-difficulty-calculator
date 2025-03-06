@@ -8,7 +8,7 @@ function DifficultyMatrix({ matrix, setMatrix }) {
   
     const getColor = (value) => {
       if (value <= 3) return "bg-green-300";
-      if (value >= 4 && value <= 5) return "bg-orange-300";
+      if (value > 3 && value <= 5) return "bg-orange-300";
       return "bg-red-400";
     };
   
