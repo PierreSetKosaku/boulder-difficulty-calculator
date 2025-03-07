@@ -16,7 +16,13 @@ function BoulderCalculator({ holds, movements, matrix }) {
       }
     
       const distance = Math.sqrt((hold2.x - hold1.x) ** 2 + (hold2.y - hold1.y) ** 2) * 20;
-      const holdFactor = matrix[movement][hold1.type];
+
+      // Get difficulty factors for both holds
+      const holdFactor1 = matrix[movement][hold1.type];
+      const holdFactor2 = matrix[movement][hold2.type];
+
+      // Combine the two hold factors (weighted average approach)
+      const holdFactor = (holdFactor1 * 0.7) + (holdFactor2 * 0.3);
     
       return holdFactor * (1 + distance / 50);
     };
