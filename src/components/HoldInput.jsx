@@ -1,6 +1,36 @@
-function HoldInput({ holds, setHolds, movements, setMovements }) {
+import { useEffect, useState } from "react";
+
+
+function HoldInput({ holds, setHolds, movements, setMovements, startHolds, setStartHolds }) {
+  const [checkedState, setCheckedState] = useState({});
+
   const addHold = () => {
     setHolds([...holds, { x: 0, y: 0, type: "Jugs" }]);
+  };
+
+  const toggleStartHold = (index) => {
+    const selectedHold = holds[index];
+  
+    setStartHolds((prev) => {
+      console.log("Previous startHolds:", prev);
+      console.log("Selected Hold:", selectedHold);
+  
+      // Fix: Use JSON.stringify() for object comparison
+      const isAlreadySelected = prev.some(h => JSON.stringify(h) === JSON.stringify(selectedHold));
+  
+      if (isAlreadySelected) {
+        console.log("Removing hold...");
+        return prev.filter(h => JSON.stringify(h) !== JSON.stringify(selectedHold));
+      }
+  
+      if (prev.length < 2) {
+        console.log("Adding hold...");
+        return [...prev, selectedHold];
+      }
+  
+      console.log("Start holds are full, not adding.");
+      return prev; // No change
+    });
   };
 
   const removeHold = (index) => {
@@ -21,6 +51,16 @@ function HoldInput({ holds, setHolds, movements, setMovements }) {
     updatedHolds[index][field] = value;
     setHolds(updatedHolds);
   };
+
+
+  // ✅ Sync checkbox state when `startHolds` updates
+  useEffect(() => {
+    const newCheckedState = {};
+    holds.forEach((hold, index) => {
+      newCheckedState[index] = startHolds.some(h => h.x === hold.x && h.y === hold.y && h.type === hold.type);
+    });
+    setCheckedState(newCheckedState);
+  }, [startHolds, holds]);
 
   return (
     <div className="mb-6">
@@ -51,6 +91,17 @@ function HoldInput({ holds, setHolds, movements, setMovements }) {
             <option value="Pinches">Pinches</option>
             <option value="Edges">Edges</option>
           </select>
+          {index < 2 && (
+            <label className="flex items-center space-x-2 text-gray-300">
+              <input
+                type="checkbox"
+                checked={checkedState[index] || false} // Check if selected
+                onChange={() => toggleStartHold(index)}
+                className="w-4 h-4"
+              />
+              <span>Start Hold</span>
+            </label>
+          )}
           <button
             onClick={() => removeHold(index)}
             className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"

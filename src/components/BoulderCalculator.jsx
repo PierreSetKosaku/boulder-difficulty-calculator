@@ -1,4 +1,4 @@
-function BoulderCalculator({ holds, movements, matrix }) {
+function BoulderCalculator({ holds, movements, matrix, startHolds }) {
     const calculateDifficulty = () => {
       if (holds.length < 2) return 0;
 
@@ -8,6 +8,7 @@ function BoulderCalculator({ holds, movements, matrix }) {
     };
 
     const calculateMoveDifficulty = (hold1, hold2, movement, matrix) => {
+      console.log(startHolds);
       if (!hold1 || !hold2 || !movement) return 0; // Prevent errors
     
       // Skip calculation if a hold has (0,0) coordinates
